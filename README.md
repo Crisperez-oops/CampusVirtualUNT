@@ -7,7 +7,7 @@ estudiantes pueden encontrarse y chatear en un Hub 2D compartido.
 Construido 100% en PHP puro orientado a objetos + PDO, HTML/CSS/JS vanilla y MySQL.
 Sin Docker, sin Node.js, sin WebSockets — listo para hosting compartido tipo InfinityFree.
 
----
+--
 
 ## 1. Estructura del proyecto
 
