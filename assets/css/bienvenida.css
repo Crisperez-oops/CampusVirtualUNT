@@ -1,0 +1,2121 @@
+@charset "UTF-8";
+/* ================================================================================
+   bienvenida.css — Hero de bienvenida del Hub (index.php)
+   SISTEMA "AURORA GLASS" — extiende estilo.css, usa solo sus variables.
+   Cárgalo DESPUÉS de estilo.css.
+   ================================================================================
+   Índice:
+   00. Notas de compatibilidad de variables
+   01. Keyframes propios de este archivo
+   02. Accesibilidad: saltar al contenido
+   03. Hero — estructura, ambiente día/tarde/noche, partículas del patio
+   04. Reloj, fecha, saludo, buscador rápido
+   05. Avatar / campanario
+   06. Franja de resumen del día (stats glass + tendencia + mini-gráfico)
+   07. Puertas — accesos rápidos (normal, nueva, popular, bloqueada, notificación)
+   08. Estados de carga y vacío de puertas
+   09. Paleta de comandos (categorías, resultados, atajos, vacío, carga)
+   10. Racha de conexión (llama animada + calendario de racha)
+   11. Tablón de anuncios (post-its, corcho, hilos, niveles de importancia)
+   12. Reto del día (opciones, progreso, anillo de tiempo, celebración)
+   13. Favoritos (chips arrastrables, zona de soltar, contador)
+   14. Botones y controles propios del hero
+   15. Tooltips propios del hero
+   16. Reducción de movimiento
+   17. Alto contraste
+   18. Impresión
+   19. Responsive
+   ================================================================================ */
+
+
+/* ============================================================
+   00. NOTAS DE COMPATIBILIDAD DE VARIABLES
+   ------------------------------------------------------------
+   Este archivo ya NO usa --granate, --oliva ni --bg-fondo (no existen
+   en estilo.css). Se mapean así al sistema Aurora Glass:
+     --granate  →  var(--error)   (alertas, pines, "incorrecta")
+     --oliva    →  var(--ok)      (aciertos, estados positivos)
+     --bg-fondo →  rgba(255,255,255,0.4) + backdrop-filter (glass)
+   Todas las demás variables (--acento, --bg-panel, --r-*, --sombra-*,
+   --glass-blur-*, --t-*, --curva-*, --fuente-*, --z-*) vienen de estilo.css.
+   ============================================================ */
+
+
+/* ============================================================
+   01. KEYFRAMES PROPIOS DE ESTE ARCHIVO
+   ============================================================ */
+
+@keyframes titilar-hero {
+    0%, 100% { opacity: 0; transform: scale(0.8); }
+    50%      { opacity: 0.85; transform: scale(1.3); }
+}
+
+@keyframes caer {
+    to { transform: translateY(280px); }
+}
+
+@keyframes girar-rayos {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes campanear {
+    0%, 100% { transform: rotate(0deg); }
+    20%      { transform: rotate(22deg); }
+    40%      { transform: rotate(-18deg); }
+    60%      { transform: rotate(14deg); }
+    80%      { transform: rotate(-8deg); }
+}
+
+@keyframes puerta-aparecer {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes flotar-hoja {
+    0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+    10%  { opacity: 0.5; }
+    50%  { transform: translate(14px, -60px) rotate(140deg); }
+    90%  { opacity: 0.35; }
+    100% { transform: translate(-6px, -130px) rotate(280deg); opacity: 0; }
+}
+
+@keyframes llama-vaiven {
+    0%, 100% { transform: scaleY(1) scaleX(1) rotate(-1deg); }
+    25%      { transform: scaleY(1.08) scaleX(0.95) rotate(1.5deg); }
+    50%      { transform: scaleY(0.95) scaleX(1.05) rotate(-2deg); }
+    75%      { transform: scaleY(1.05) scaleX(0.97) rotate(1deg); }
+}
+
+@keyframes llama-nucleo {
+    0%, 100% { opacity: 0.75; transform: scale(1); }
+    50%      { opacity: 1; transform: scale(1.12); }
+}
+
+@keyframes chincheta-caer {
+    0%   { transform: translate(-50%, -14px) scale(0.6); opacity: 0; }
+    60%  { transform: translate(-50%, 2px) scale(1.15); opacity: 1; }
+    100% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+}
+
+@keyframes anillo-tiempo-consumir {
+    from { stroke-dashoffset: 0; }
+    to   { stroke-dashoffset: var(--circunferencia, 251); }
+}
+
+@keyframes confeti-caer {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(160px) rotate(540deg); opacity: 0; }
+}
+
+@keyframes racha-pulso {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.35); }
+    70%      { box-shadow: 0 0 0 10px rgba(217, 119, 6, 0); }
+}
+
+@keyframes chip-entrar {
+    from { opacity: 0; transform: scale(0.85) translateY(6px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes chip-salir {
+    from { opacity: 1; transform: scale(1); }
+    to   { opacity: 0; transform: scale(0.7); }
+}
+
+@keyframes candado-tiembla {
+    0%, 100% { transform: translateX(0); }
+    20%      { transform: translateX(-2px) rotate(-3deg); }
+    40%      { transform: translateX(2px) rotate(3deg); }
+    60%      { transform: translateX(-1px) rotate(-2deg); }
+    80%      { transform: translateX(1px) rotate(2deg); }
+}
+
+@keyframes estrella-fugaz {
+    0%   { transform: translate(0, 0) scale(0); opacity: 0; }
+    5%   { opacity: 1; transform: scale(1); }
+    100% { transform: translate(-180px, 90px) scale(0.3); opacity: 0; }
+}
+
+@keyframes hilo-tension {
+    0%, 100% { transform: scaleY(1); }
+    50%      { transform: scaleY(1.03); }
+}
+
+@keyframes destello-mini {
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 1; }
+}
+
+@keyframes contador-subir {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes borde-viajero {
+    0%   { background-position: 0% 0%; }
+    100% { background-position: 200% 0%; }
+}
+
+@keyframes sonar-campana-onda {
+    0%   { transform: scale(0.6); opacity: 0.6; }
+    100% { transform: scale(2.2); opacity: 0; }
+}
+
+
+/* ============================================================
+   02. ACCESIBILIDAD: SALTAR AL CONTENIDO
+   ============================================================ */
+
+.salto-contenido {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: var(--z-toast);
+    padding: 11px 18px;
+    background: linear-gradient(135deg, var(--acento), var(--acento-claro));
+    color: #fff;
+    font-family: var(--fuente-cuerpo);
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    border-radius: 0 0 var(--r-md) 0;
+    box-shadow: var(--sombra-glow-acento);
+    transition: transform var(--t-rapido) var(--curva-rebote);
+}
+
+.salto-contenido:focus {
+    left: 0;
+    transform: translateY(0);
+}
+
+
+/* ============================================================
+   03. HERO — ESTRUCTURA, AMBIENTE, PARTÍCULAS
+   ============================================================ */
+
+.hub-hero {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    min-height: 250px;
+    padding: 34px 30px;
+    margin-bottom: 22px;
+    background: var(--bg-panel);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-2xl);
+    box-shadow: var(--sombra-glass), var(--sombra-interior);
+    animation: aparecer-subir var(--t-lento) var(--curva-entrada) both;
+}
+
+.hub-hero::before {
+    /* misma línea de acento que .auth-card::before, para sentirse parte del mismo sistema */
+    content: '';
+    position: absolute;
+    top: -1px; left: 28px; right: 28px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--acento), transparent);
+    z-index: 3;
+}
+
+.hub-hero::after {
+    /* barrido de brillo, igual que en auth-card */
+    content: '';
+    position: absolute;
+    top: -60%; left: -20%;
+    width: 55%; height: 220%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: rotate(18deg);
+    pointer-events: none;
+    animation: brillo-barrido 9s ease-in-out infinite;
+    animation-delay: 2s;
+    z-index: 1;
+}
+
+/* Borde con degradado "viajero" sutil, se activa en hover de todo el hero */
+.hub-hero {
+    background-clip: padding-box;
+}
+.hub-hero:hover {
+    box-shadow: var(--sombra-lg), var(--sombra-interior);
+}
+
+/* ---------- Ambiente del patio (cambia según la hora del día) ---------- */
+
+.hub-hero-ambiente {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.hub-hero-estrellas,
+.hub-hero-garua,
+.hub-hero-rayos {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.7s ease;
+}
+
+body[data-momento="noche"] .hub-hero-estrellas { opacity: 1; }
+body[data-momento="tarde"] .hub-hero-garua      { opacity: 1; }
+body[data-momento="manana"] .hub-hero-rayos     { opacity: 1; }
+
+.estrella {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--acento-claro);
+    box-shadow: 0 0 6px 1px rgba(102, 131, 240, 0.6);
+    opacity: 0;
+    animation: titilar-hero ease-in-out infinite;
+}
+
+.estrella:nth-child(3n) { background: var(--violeta); box-shadow: 0 0 6px 1px rgba(139, 92, 246, 0.5); }
+.estrella:nth-child(4n) { width: 2px; height: 2px; }
+.estrella:nth-child(5n) { width: 4px; height: 4px; }
+
+/* Estrella fugaz decorativa, ocasional */
+.estrella-fugaz {
+    position: absolute;
+    top: 12%;
+    right: 10%;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 8px 2px rgba(255,255,255,0.9);
+    animation: estrella-fugaz 6s ease-in infinite;
+    animation-delay: 3s;
+}
+.estrella-fugaz::before {
+    content: '';
+    position: absolute;
+    top: 50%; right: 0;
+    width: 60px; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7));
+    transform: translateY(-50%);
+}
+
+/* garúa: gotas finas cayendo despacio, como la tarde nublada */
+.gota {
+    position: absolute;
+    top: -10%;
+    width: 1.5px;
+    height: 16px;
+    border-radius: var(--r-full);
+    background: linear-gradient(var(--acento-claro), transparent);
+    opacity: 0.4;
+    animation: caer linear infinite;
+}
+
+.gota:nth-child(2n) { opacity: 0.25; height: 12px; }
+.gota:nth-child(3n) { opacity: 0.5; height: 20px; }
+
+/* hojas otoñales flotando en la garúa, muy sutil */
+.hoja-flotante {
+    position: absolute;
+    bottom: 10%;
+    width: 8px;
+    height: 8px;
+    border-radius: 60% 40% 55% 45% / 45% 55% 40% 60%;
+    background: var(--alerta);
+    opacity: 0;
+    animation: flotar-hoja 9s ease-in-out infinite;
+}
+.hoja-flotante:nth-child(2n) { background: var(--rosa); animation-duration: 11s; }
+
+/* rayos de sol de la mañana, muy sutiles, con tono cálido sobre el azul */
+.hub-hero-rayos {
+    background: conic-gradient(
+        from 200deg at 90% 0%,
+        transparent 0deg,
+        rgba(217, 119, 6, 0.10) 8deg,
+        transparent 16deg,
+        transparent 40deg,
+        rgba(217, 119, 6, 0.08) 48deg,
+        transparent 56deg
+    );
+    animation: girar-rayos 46s linear infinite;
+}
+
+/* Partículas de polvo dorado en la mañana */
+.particula-polvo {
+    position: absolute;
+    width: 3px; height: 3px;
+    border-radius: 50%;
+    background: rgba(217, 119, 6, 0.5);
+    opacity: 0;
+    animation: flotar-particula 14s linear infinite;
+}
+body[data-momento="manana"] .particula-polvo { opacity: 0.6; }
+
+
+/* ============================================================
+   04. RELOJ, FECHA, SALUDO, BUSCADOR RÁPIDO
+   ============================================================ */
+
+.hub-hero-contenido {
+    position: relative;
+    z-index: 2;
+    max-width: 34rem;
+}
+
+.hub-hero-fecha {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--fuente-cuerpo);
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texto-tenue);
+    margin: 0 0 10px;
+    animation: aparecer-bajar var(--t-medio) var(--curva-entrada) both;
+}
+
+.hub-hero-reloj {
+    font-family: var(--fuente-mono);
+    letter-spacing: 0.04em;
+    color: var(--acento);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.hub-hero-reloj::before {
+    content: '·';
+    margin-right: 10px;
+    color: var(--texto-tenue);
+}
+
+/* Los dos puntos del reloj parpadean como un reloj digital real */
+.hub-hero-reloj .separador-reloj {
+    animation: titilar 1.4s steps(1) infinite;
+}
+
+.hub-hero-saludo {
+    font-family: var(--fuente-display);
+    font-weight: 700;
+    font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    color: var(--texto-principal);
+    animation: aparecer-izquierda var(--t-lento) var(--curva-entrada) both;
+    animation-delay: 0.08s;
+}
+
+.hub-hero-saludo .acento-texto {
+    background: linear-gradient(90deg, var(--acento), var(--violeta), var(--acento));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradiente-mover 5s ease infinite;
+}
+
+.hub-hero-sub {
+    font-size: 14px;
+    color: var(--texto-tenue);
+    margin: 0 0 18px;
+    animation: aparecer-izquierda var(--t-lento) var(--curva-entrada) both;
+    animation-delay: 0.14s;
+}
+
+/* Botón que abre la paleta de comandos, con pinta de "placa" glass */
+.hub-buscar-abrir {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: var(--glass-blur-suave);
+    -webkit-backdrop-filter: var(--glass-blur-suave);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-full);
+    color: var(--texto-tenue);
+    font-family: var(--fuente-cuerpo);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all var(--t-rapido) var(--curva-suave);
+    animation: aparecer-izquierda var(--t-lento) var(--curva-entrada) both;
+    animation-delay: 0.2s;
+}
+
+.hub-buscar-abrir:hover,
+.hub-buscar-abrir:focus-visible {
+    border-color: var(--acento);
+    color: var(--texto-principal);
+    background: rgba(255, 255, 255, 0.65);
+    transform: translateY(-1px);
+    box-shadow: var(--sombra-sm);
+}
+
+.hub-buscar-abrir:active {
+    transform: translateY(0) scale(0.97);
+}
+
+.hub-buscar-abrir svg {
+    transition: transform var(--t-rapido) var(--curva-suave);
+}
+
+.hub-buscar-abrir:hover svg {
+    transform: rotate(-8deg) scale(1.08);
+}
+
+.hub-buscar-atajo {
+    margin-left: 6px;
+    padding: 2px 7px;
+    font-family: var(--fuente-mono);
+    font-size: 10px;
+    background: rgba(59, 91, 219, 0.14);
+    border-radius: var(--r-xs);
+    color: var(--acento);
+}
+
+/* Widget de clima opcional junto al buscador */
+.hub-clima {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 10px;
+    padding: 9px 13px;
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: var(--glass-blur-suave);
+    -webkit-backdrop-filter: var(--glass-blur-suave);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-full);
+    font-size: 12.5px;
+    color: var(--texto-tenue);
+}
+.hub-clima .icono-clima { font-size: 15px; animation: flotar-suave 5s ease-in-out infinite; }
+.hub-clima .temp { font-weight: 600; color: var(--texto-principal); }
+
+
+/* ============================================================
+   05. AVATAR / CAMPANARIO
+   ============================================================ */
+
+.hub-hero-avatar {
+    position: relative;
+    z-index: 2;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    border: 2px solid var(--acento);
+    overflow: visible;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 6px var(--acento-suave), var(--sombra-md);
+    padding: 0;
+    background: none;
+    cursor: pointer;
+    transition: transform var(--t-medio) var(--curva-rebote);
+    animation: flotar-suave 6s ease-in-out infinite;
+}
+
+.hub-hero-avatar:hover {
+    transform: scale(1.06) rotate(-3deg);
+}
+
+.hub-hero-avatar:active {
+    transform: scale(0.97);
+}
+
+.hub-hero-avatar::after {
+    /* anillo pulsante muy sutil que indica "en línea" */
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 1px solid var(--acento);
+    opacity: 0;
+    animation: pulso 3.4s ease-out infinite;
+}
+
+.hub-hero-foto {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: var(--sombra-interior);
+}
+
+.hub-hero-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform var(--t-lento) var(--curva-suave);
+}
+
+.hub-hero-avatar:hover .hub-hero-foto img {
+    transform: scale(1.1);
+}
+
+.hub-hero-campana {
+    position: relative;
+    bottom: -4px;
+    right: -4px;
+    margin-top: -24px;
+    margin-left: 52px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    background: var(--bg-panel-fuerte);
+    backdrop-filter: var(--glass-blur-suave);
+    -webkit-backdrop-filter: var(--glass-blur-suave);
+    border: 1px solid var(--linea-fuerte);
+    border-radius: 50%;
+    box-shadow: var(--sombra-xs);
+    transform-origin: top center;
+    cursor: pointer;
+    position: absolute;
+    transition: transform var(--t-rapido) var(--curva-rebote);
+}
+
+.hub-hero-campana:hover {
+    transform: scale(1.12);
+}
+
+.hub-hero-campana.sonando {
+    animation: campanear 0.6s ease-in-out 2;
+}
+
+.hub-hero-campana.sonando::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1.5px solid var(--acento);
+    animation: sonar-campana-onda 0.8s ease-out 2;
+}
+
+.hub-hero-campana .punto-noti {
+    position: absolute;
+    top: -2px; right: -2px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--rosa);
+    border: 1.5px solid var(--bg-panel-fuerte);
+    animation: latido 1.8s ease-in-out infinite;
+}
+
+
+/* ============================================================
+   06. FRANJA DE RESUMEN DEL DÍA
+   ============================================================ */
+
+.hub-resumen {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.hub-resumen-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 16px;
+    background: var(--bg-panel);
+    backdrop-filter: var(--glass-blur-3);
+    -webkit-backdrop-filter: var(--glass-blur-3);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-lg);
+    box-shadow: var(--sombra-glass-suave);
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--t-medio) ease, box-shadow var(--t-medio) ease;
+    animation: escala-pop var(--t-medio) var(--curva-entrada) both;
+}
+
+.hub-resumen-item::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -75%;
+    width: 50%; height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.45), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.7s ease;
+    pointer-events: none;
+}
+.hub-resumen-item:hover::before { left: 130%; }
+
+.hub-resumen-item:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--sombra-md);
+}
+
+.hub-resumen-icono {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: var(--r-sm);
+    background: var(--acento-suave);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    line-height: 1;
+    transition: transform var(--t-medio) var(--curva-rebote);
+}
+
+.hub-resumen-item:hover .hub-resumen-icono {
+    transform: scale(1.12) rotate(-6deg);
+}
+
+.hub-resumen-item.tono-rosa .hub-resumen-icono { background: var(--rosa-suave); color: var(--rosa); }
+.hub-resumen-item.tono-violeta .hub-resumen-icono { background: var(--violeta-suave); color: var(--violeta); }
+.hub-resumen-item.tono-ok .hub-resumen-icono { background: var(--ok-suave); color: var(--ok); }
+.hub-resumen-item.tono-cian .hub-resumen-icono { background: var(--cian-suave); color: var(--cian); }
+
+.hub-resumen-texto { flex-grow: 1; min-width: 0; }
+
+.hub-resumen-valor {
+    font-family: var(--fuente-display);
+    font-weight: 700;
+    font-size: 21px;
+    color: var(--texto-principal);
+    margin: 0;
+    line-height: 1.2;
+    animation: contador-subir var(--t-medio) var(--curva-entrada) both;
+}
+
+.hub-resumen-valor-texto {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 16ch;
+}
+
+.hub-resumen-label {
+    font-size: 11.5px;
+    color: var(--texto-tenue);
+    margin: 0;
+}
+
+/* Mini-tendencia (flecha + porcentaje) */
+.hub-resumen-tendencia {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10.5px;
+    margin-top: 3px;
+}
+.hub-resumen-tendencia.subida { color: var(--ok); }
+.hub-resumen-tendencia.bajada { color: var(--error); }
+.hub-resumen-tendencia svg { width: 10px; height: 10px; }
+
+/* Mini gráfico de barras puramente decorativo, con CSS puro (sin JS) */
+.hub-resumen-mini-grafico {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 20px;
+    flex-shrink: 0;
+}
+.hub-resumen-mini-grafico span {
+    width: 3px;
+    background: var(--acento-suave);
+    border-radius: var(--r-full) var(--r-full) 0 0;
+    animation: barra-crecer var(--t-lento) var(--curva-entrada) both;
+}
+@keyframes barra-crecer {
+    from { transform: scaleY(0); }
+    to   { transform: scaleY(1); }
+}
+.hub-resumen-mini-grafico span:nth-child(1) { height: 40%; }
+.hub-resumen-mini-grafico span:nth-child(2) { height: 65%; }
+.hub-resumen-mini-grafico span:nth-child(3) { height: 50%; }
+.hub-resumen-mini-grafico span:nth-child(4) { height: 85%; background: var(--acento); }
+.hub-resumen-mini-grafico span:nth-child(5) { height: 100%; background: var(--acento); }
+
+.hub-avatares-stack {
+    display: flex;
+}
+
+.hub-avatares-stack img {
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--bg-panel-fuerte);
+    margin-left: -10px;
+    transition: transform var(--t-rapido) var(--curva-suave);
+}
+
+.hub-avatares-stack img:first-child {
+    margin-left: 0;
+}
+
+.hub-avatares-stack img:hover {
+    transform: translateY(-3px) scale(1.1);
+    z-index: 1;
+    position: relative;
+}
+
+.hub-avatares-stack .mas-contador {
+    width: 27px; height: 27px;
+    border-radius: 50%;
+    margin-left: -10px;
+    background: var(--acento-suave);
+    color: var(--acento);
+    border: 2px solid var(--bg-panel-fuerte);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+
+/* ============================================================
+   07. PUERTAS — ACCESOS RÁPIDOS
+   ============================================================ */
+
+.puertas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+}
+
+.puerta {
+    --i: 0;
+    position: relative;
+    background: var(--bg-panel);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    box-shadow: var(--sombra-glass-suave);
+    opacity: 0;
+    transform: translateY(10px);
+    animation: puerta-aparecer var(--t-lento) var(--curva-entrada) forwards;
+    animation-delay: calc(var(--i) * 60ms + 150ms);
+    transition: border-color var(--t-medio) ease, transform var(--t-medio) var(--curva-suave), box-shadow var(--t-medio) ease;
+}
+
+.puerta::before {
+    /* barrido de brillo al pasar el mouse, igual que en tarjeta-talento */
+    content: '';
+    position: absolute;
+    top: 0; left: -75%;
+    width: 50%; height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.5), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.7s ease;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.puerta:hover::before { left: 130%; }
+
+.puerta:hover {
+    border-color: var(--acento-suave-2);
+    transform: translateY(-5px) scale(1.015);
+    box-shadow: var(--sombra-lg);
+}
+
+.puerta:active {
+    transform: translateY(-2px) scale(0.995);
+}
+
+/* El enlace real ocupa toda la tarjeta ("stretched link"); el pin de
+   favorito queda como hermano posicionado encima, con su propio z-index,
+   para no anidar un <button> dentro de un <a>. */
+.puerta-enlace {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 18px;
+    text-decoration: none;
+    color: var(--texto-principal);
+}
+
+.puerta-enlace:focus-visible {
+    outline: 2px solid var(--acento);
+    outline-offset: -2px;
+    border-radius: var(--r-md);
+}
+
+.puerta-fav {
+    position: absolute;
+    z-index: 4;
+    top: 10px;
+    left: 10px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-panel-fuerte);
+    backdrop-filter: var(--glass-blur-suave);
+    -webkit-backdrop-filter: var(--glass-blur-suave);
+    border: 1px solid var(--linea-fuerte);
+    border-radius: 50%;
+    font-size: 12px;
+    opacity: 0;
+    cursor: pointer;
+    box-shadow: var(--sombra-xs);
+    transition: opacity var(--t-rapido) ease, transform var(--t-rapido) var(--curva-rebote), border-color var(--t-rapido) ease;
+}
+
+.puerta:hover .puerta-fav,
+.puerta-fav:focus-visible,
+.puerta-fav.activo {
+    opacity: 1;
+}
+
+.puerta-fav.activo {
+    border-color: var(--acento);
+    color: var(--acento);
+    transform: rotate(-25deg) scale(1.05);
+    animation: latido 2.4s ease-in-out infinite;
+}
+
+.puerta-fav:hover {
+    transform: scale(1.15);
+}
+
+.puerta-fav:active {
+    transform: scale(0.9);
+}
+
+.puerta-fav:focus-visible {
+    outline: 2px solid var(--acento);
+    outline-offset: 1px;
+}
+
+.puerta-icono {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--r-sm);
+    background: var(--acento-suave);
+    font-size: 20px;
+    line-height: 1;
+    margin-bottom: 2px;
+    transition: transform var(--t-medio) var(--curva-rebote);
+}
+
+.puerta:hover .puerta-icono {
+    transform: scale(1.1) rotate(-4deg);
+}
+
+.puerta-titulo {
+    font-family: var(--fuente-display);
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.puerta-desc {
+    font-size: 12px;
+    color: var(--texto-tenue);
+}
+
+.puerta-badge {
+    position: absolute;
+    z-index: 2;
+    top: 10px;
+    right: 10px;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--rosa), var(--violeta));
+    color: #fff;
+    font-family: var(--fuente-cuerpo);
+    font-size: 10.5px;
+    font-weight: 600;
+    border-radius: var(--r-full);
+    box-shadow: 0 3px 10px rgba(236, 72, 153, 0.35);
+    animation: latido 2.6s ease-in-out infinite;
+}
+
+.puerta-atajo {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 2;
+    padding: 2px 7px;
+    font-family: var(--fuente-mono);
+    font-size: 10px;
+    color: var(--acento);
+    background: rgba(59, 91, 219, 0.14);
+    border-radius: var(--r-xs);
+    opacity: 0;
+    transition: opacity var(--t-rapido) ease;
+}
+
+.puerta:hover .puerta-atajo,
+.puerta:focus-visible .puerta-atajo {
+    opacity: 1;
+}
+
+/* ---------- Variantes de puerta ---------- */
+
+/* Puerta "nueva": borde con degradado viajero sutil */
+.puerta.es-nueva {
+    border: 1px solid transparent;
+    background-image:
+        linear-gradient(var(--bg-panel), var(--bg-panel)),
+        linear-gradient(90deg, var(--acento), var(--violeta), var(--rosa), var(--acento));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    background-size: 100% 100%, 250% 100%;
+    animation: puerta-aparecer var(--t-lento) var(--curva-entrada) forwards, borde-viajero 6s linear infinite;
+    animation-delay: calc(var(--i) * 60ms + 150ms), 0.6s;
+}
+
+.puerta.es-nueva .puerta-titulo::after {
+    content: 'NUEVO';
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 6px;
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    background: linear-gradient(135deg, var(--acento), var(--violeta));
+    color: #fff;
+    border-radius: var(--r-xs);
+    vertical-align: middle;
+    animation: respirar 2.4s ease-in-out infinite;
+}
+
+/* Puerta "popular": llama pequeña junto al ícono */
+.puerta.es-popular .puerta-icono::after {
+    content: '🔥';
+    position: absolute;
+    font-size: 12px;
+    transform: translate(14px, -14px);
+    animation: llama-vaiven 1.6s ease-in-out infinite;
+}
+.puerta.es-popular .puerta-icono { position: relative; }
+
+/* Puerta bloqueada: reduce opacidad, agrega candado, desactiva el link visualmente */
+.puerta.bloqueada {
+    filter: grayscale(0.4);
+}
+.puerta.bloqueada .puerta-enlace {
+    pointer-events: none;
+    opacity: 0.6;
+}
+.puerta.bloqueada::after {
+    content: '🔒';
+    position: absolute;
+    z-index: 3;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    filter: none;
+    opacity: 0.9;
+}
+.puerta.bloqueada:hover::after {
+    animation: candado-tiembla 0.4s ease-in-out;
+}
+.puerta.bloqueada:hover {
+    transform: none;
+    box-shadow: var(--sombra-glass-suave);
+}
+
+/* Puerta con notificación pendiente: punto pulsante en la esquina del ícono */
+.puerta-icono.con-notificacion {
+    position: relative;
+}
+.puerta-icono.con-notificacion::before {
+    content: '';
+    position: absolute;
+    top: -3px; right: -3px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--error);
+    border: 2px solid var(--bg-panel-fuerte);
+    animation: racha-pulso 2s ease-out infinite;
+}
+
+.puertas-vacio {
+    text-align: center;
+    padding: 36px 0;
+    color: var(--texto-tenue);
+    font-size: 13px;
+}
+
+
+/* ============================================================
+   08. ESTADOS DE CARGA Y VACÍO DE PUERTAS
+   ============================================================ */
+
+.puerta-skeleton {
+    padding: 18px;
+    border-radius: var(--r-xl);
+    background: var(--bg-panel-suave);
+    border: 1px solid var(--linea);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.puerta-skeleton .sk-icono {
+    width: 40px; height: 40px;
+    border-radius: var(--r-sm);
+    background: linear-gradient(90deg, rgba(59,91,219,0.08) 0%, rgba(59,91,219,0.18) 50%, rgba(59,91,219,0.08) 100%);
+    background-size: 800px 100%;
+    animation: shimmer 1.6s linear infinite;
+}
+.puerta-skeleton .sk-linea {
+    height: 12px;
+    border-radius: var(--r-full);
+    background: linear-gradient(90deg, rgba(59,91,219,0.08) 0%, rgba(59,91,219,0.18) 50%, rgba(59,91,219,0.08) 100%);
+    background-size: 800px 100%;
+    animation: shimmer 1.6s linear infinite;
+}
+.puerta-skeleton .sk-linea.corta { width: 60%; }
+
+.oculto {
+    display: none !important;
+}
+
+/* Estado vacío ilustrado para las puertas (sin favoritos, sin resultados, etc.) */
+.puertas-vacio-ilustrado {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 48px 20px;
+}
+.puertas-vacio-icono {
+    width: 60px; height: 60px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: var(--acento-suave);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    animation: flotar-suave 4s ease-in-out infinite;
+}
+.puertas-vacio-titulo {
+    font-family: var(--fuente-display);
+    font-weight: 700;
+    font-size: 14.5px;
+    color: var(--texto-principal);
+    margin-bottom: 4px;
+}
+.puertas-vacio-texto {
+    font-size: 12.5px;
+    color: var(--texto-tenue);
+}
+
+
+/* ============================================================
+   09. PALETA DE COMANDOS
+   ============================================================ */
+
+.hub-comandos {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal-fondo);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 12vh;
+    background: rgba(26, 32, 54, 0.4);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    animation: aparecer var(--t-rapido) ease both;
+}
+
+/* Importante: el atributo [hidden] tiene la MISMA especificidad que .hub-comandos,
+   así que sin esta regla el "display: flex" de arriba gana siempre y el modal
+   queda visible aunque JS ponga hidden = true. Esta regla lo corrige. */
+.hub-comandos[hidden] {
+    display: none;
+}
+
+.hub-comandos-panel {
+    width: min(560px, 92vw);
+    max-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-panel-fuerte);
+    backdrop-filter: var(--glass-blur-5);
+    -webkit-backdrop-filter: var(--glass-blur-5);
+    border: 1px solid var(--linea-fuerte);
+    border-radius: var(--r-2xl);
+    box-shadow: var(--sombra-xl);
+    overflow: hidden;
+    animation: escala-pop var(--t-medio) var(--curva-entrada) both;
+}
+
+.hub-comandos-input-fila {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--linea);
+}
+
+.hub-comandos-input-fila svg {
+    color: var(--texto-suave);
+    flex-shrink: 0;
+}
+
+.hub-comandos-input-fila input {
+    flex: 1;
+    border: none;
+    background: none;
+    outline: none;
+    font-family: var(--fuente-cuerpo);
+    font-size: 14px;
+    color: var(--texto-principal);
+}
+
+.hub-comandos-input-fila kbd {
+    padding: 2px 7px;
+    font-size: 10px;
+    font-family: var(--fuente-mono);
+    background: rgba(59, 91, 219, 0.14);
+    border-radius: var(--r-xs);
+    color: var(--acento);
+}
+
+/* Spinner de "buscando..." dentro de la barra */
+.hub-comandos-cargando {
+    width: 15px; height: 15px;
+    border: 2px solid rgba(59,91,219,0.2);
+    border-top-color: var(--acento);
+    border-radius: 50%;
+    animation: girar 0.7s linear infinite;
+    flex-shrink: 0;
+}
+
+.hub-comandos-categorias {
+    display: flex;
+    gap: 6px;
+    padding: 10px 14px 0;
+    overflow-x: auto;
+}
+.hub-comandos-categoria {
+    padding: 5px 12px;
+    border-radius: var(--r-full);
+    background: rgba(255,255,255,0.4);
+    border: 1px solid var(--linea);
+    font-size: 11.5px;
+    color: var(--texto-tenue);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all var(--t-rapido) ease;
+}
+.hub-comandos-categoria.activa {
+    background: linear-gradient(135deg, var(--acento), var(--acento-claro));
+    color: #fff;
+    border-color: transparent;
+}
+
+.hub-comandos-lista {
+    list-style: none;
+    margin: 0;
+    padding: 8px;
+    overflow-y: auto;
+}
+
+.hub-comandos-lista li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 12px;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    color: var(--texto-principal);
+    font-size: 13.5px;
+    transition: background var(--t-rapido) ease, padding-left var(--t-rapido) ease;
+}
+
+.hub-comandos-lista li .icono {
+    width: 30px; height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--r-xs);
+    background: var(--acento-suave);
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+.hub-comandos-lista li .desc {
+    margin-left: auto;
+    font-size: 11.5px;
+    color: var(--texto-tenue);
+}
+
+.hub-comandos-lista li[aria-selected="true"],
+.hub-comandos-lista li:hover {
+    background: var(--acento-suave);
+    padding-left: 16px;
+}
+
+.hub-comandos-lista li[aria-selected="true"] .icono {
+    background: var(--acento);
+    color: #fff;
+}
+
+.hub-comandos-grupo-titulo {
+    padding: 8px 12px 4px;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--texto-suave);
+}
+
+/* Estado vacío del buscador de comandos */
+.hub-comandos-vacio {
+    text-align: center;
+    padding: 32px 20px;
+    color: var(--texto-tenue);
+    font-size: 13px;
+}
+.hub-comandos-vacio-icono {
+    font-size: 26px;
+    margin-bottom: 8px;
+    opacity: 0.6;
+}
+
+.hub-comandos-recientes-titulo {
+    padding: 10px 12px 4px;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--texto-suave);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+
+/* ============================================================
+   10. RACHA DE CONEXIÓN
+   ============================================================ */
+
+.hub-racha {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    background: linear-gradient(135deg, var(--acento-suave), var(--violeta-suave));
+    border-radius: var(--r-full);
+    color: var(--texto-principal);
+    font-weight: 600;
+    letter-spacing: normal;
+    text-transform: none;
+    animation: respirar 3.6s ease-in-out infinite;
+}
+
+/* Llama animada de la racha (para versiones extendidas del badge) */
+.hub-racha-llama {
+    position: relative;
+    width: 14px;
+    height: 16px;
+    display: inline-block;
+}
+.hub-racha-llama .externa {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, var(--alerta), var(--error));
+    border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+    animation: llama-vaiven 1.1s ease-in-out infinite;
+    transform-origin: bottom center;
+}
+.hub-racha-llama .nucleo {
+    position: absolute;
+    left: 3px; right: 3px; bottom: 1px;
+    top: 5px;
+    background: #FDE68A;
+    border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+    animation: llama-nucleo 0.9s ease-in-out infinite;
+    transform-origin: bottom center;
+}
+
+/* Tarjeta expandida de racha, con calendario de puntos */
+.hub-racha-tarjeta {
+    padding: 16px;
+    background: var(--bg-panel);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-lg);
+    box-shadow: var(--sombra-glass-suave);
+    margin-bottom: 20px;
+}
+.hub-racha-tarjeta-cabeza {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.hub-racha-numero {
+    font-family: var(--fuente-display);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--texto-principal);
+}
+.hub-racha-calendario {
+    display: flex;
+    gap: 5px;
+}
+.hub-racha-dia {
+    width: 22px; height: 22px;
+    border-radius: var(--r-xs);
+    background: rgba(59, 91, 219, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: var(--texto-suave);
+}
+.hub-racha-dia.completo {
+    background: linear-gradient(135deg, var(--acento), var(--acento-claro));
+    color: #fff;
+    box-shadow: var(--sombra-glow-acento);
+}
+.hub-racha-dia.hoy {
+    border: 1.5px solid var(--acento);
+    animation: racha-pulso 2s ease-out infinite;
+}
+
+
+/* ============================================================
+   11. TABLÓN DE ANUNCIOS
+   ============================================================ */
+
+.hub-encabezado-compacto {
+    margin-bottom: 12px;
+}
+
+.hub-encabezado-compacto h2 {
+    font-size: 15px;
+}
+
+.hub-tablon {
+    margin-bottom: 22px;
+    position: relative;
+    padding: 4px;
+    border-radius: var(--r-xl);
+    /* textura muy sutil de "corcho" usando ruido de gradientes radiales pequeños */
+    background-image:
+        radial-gradient(rgba(217, 119, 6, 0.05) 1px, transparent 1px),
+        radial-gradient(rgba(217, 119, 6, 0.04) 1px, transparent 1px);
+    background-size: 14px 14px, 18px 18px;
+    background-position: 0 0, 7px 9px;
+}
+
+.hub-tablon-lista {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 10px 6px 14px;
+}
+
+.hub-anuncio {
+    position: relative;
+    flex: 0 0 240px;
+    padding: 18px 15px 15px;
+    background: var(--bg-panel);
+    backdrop-filter: var(--glass-blur-3);
+    -webkit-backdrop-filter: var(--glass-blur-3);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-lg);
+    box-shadow: var(--sombra-glass-suave);
+    transition: transform var(--t-medio) var(--curva-suave), box-shadow var(--t-medio) ease;
+    animation: chincheta-caer var(--t-lento) var(--curva-rebote) both;
+}
+
+.hub-anuncio:nth-child(odd)  { transform: rotate(-1.4deg); }
+.hub-anuncio:nth-child(even) { transform: rotate(1.4deg); }
+.hub-anuncio:nth-child(3n)   { transform: rotate(-0.6deg); }
+
+.hub-anuncio:hover {
+    transform: rotate(0deg) translateY(-4px) scale(1.03);
+    box-shadow: var(--sombra-lg);
+    z-index: 1;
+}
+
+.hub-anuncio::before {
+    /* la "chincheta" que fija el aviso al tablón */
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--rosa), var(--error));
+    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.4);
+}
+
+.hub-anuncio::after {
+    /* pequeño brillo especular en la chincheta */
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: calc(50% - 2px);
+    width: 3px; height: 3px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.8);
+}
+
+/* Variantes de importancia: cambian el color de la chincheta */
+.hub-anuncio.importancia-media::before { background: linear-gradient(135deg, var(--alerta), #F59E0B); box-shadow: 0 2px 6px rgba(217, 119, 6, 0.4); }
+.hub-anuncio.importancia-baja::before  { background: linear-gradient(135deg, var(--cian), #22D3EE); box-shadow: 0 2px 6px rgba(6, 182, 212, 0.4); }
+.hub-anuncio.destacado {
+    border-color: var(--acento-suave-2);
+    box-shadow: var(--sombra-glow-acento);
+}
+.hub-anuncio.destacado::before { animation: latido 2s ease-in-out infinite; }
+
+.hub-anuncio-titulo {
+    margin: 0 0 6px;
+    font-family: var(--fuente-display);
+    font-weight: 700;
+    font-size: 13.5px;
+}
+
+.hub-anuncio-texto {
+    margin: 0 0 10px;
+    font-size: 12.5px;
+    color: var(--texto-tenue);
+    line-height: 1.5;
+}
+
+.hub-anuncio-meta {
+    margin: 0;
+    font-size: 11px;
+    color: var(--texto-tenue);
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.hub-anuncio-meta .punto-sep {
+    width: 3px; height: 3px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.5;
+}
+
+/* Botones de navegación horizontal del tablón */
+.hub-tablon-nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 4px;
+}
+.hub-tablon-flecha {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid var(--linea);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--texto-tenue);
+    transition: all var(--t-rapido) ease;
+}
+.hub-tablon-flecha:hover { color: var(--acento); border-color: var(--acento); transform: scale(1.08); }
+
+
+/* ============================================================
+   12. RETO DEL DÍA
+   ============================================================ */
+
+.hub-reto {
+    margin-bottom: 22px;
+    padding: 18px;
+    background: var(--bg-panel);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-xl);
+    box-shadow: var(--sombra-glass-suave);
+    position: relative;
+    overflow: hidden;
+}
+
+.hub-reto::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 20px; right: 20px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--violeta), transparent);
+}
+
+.hub-reto-encabezado {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.hub-reto-icono {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--r-sm);
+    background: var(--violeta-suave);
+    font-size: 18px;
+    line-height: 1.3;
+    animation: flotar-suave 4s ease-in-out infinite;
+}
+
+.hub-reto-titulo-fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    gap: 10px;
+}
+
+.hub-reto-titulo {
+    margin: 0 0 2px;
+    font-family: var(--fuente-display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--texto-tenue);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* Anillo de tiempo restante (SVG) */
+.hub-reto-anillo-tiempo {
+    width: 34px; height: 34px;
+    flex-shrink: 0;
+    transform: rotate(-90deg);
+}
+.hub-reto-anillo-tiempo circle {
+    fill: none;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+.hub-reto-anillo-tiempo .fondo { stroke: rgba(139, 92, 246, 0.15); }
+.hub-reto-anillo-tiempo .relleno {
+    stroke: var(--violeta);
+    stroke-dasharray: 88;
+    animation: anillo-tiempo-consumir 30s linear forwards;
+    --circunferencia: 88;
+}
+
+.hub-reto-pregunta {
+    margin: 0;
+    font-size: 14.5px;
+    color: var(--texto-principal);
+}
+
+/* Barra de progreso de retos completados esta semana */
+.hub-reto-progreso-semana {
+    display: flex;
+    gap: 4px;
+    margin: 10px 0 14px;
+}
+.hub-reto-progreso-semana span {
+    flex: 1;
+    height: 5px;
+    border-radius: var(--r-full);
+    background: rgba(139, 92, 246, 0.15);
+    overflow: hidden;
+}
+.hub-reto-progreso-semana span.completo {
+    background: linear-gradient(90deg, var(--violeta), var(--acento));
+}
+
+.hub-reto-opciones {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 9px;
+}
+
+.hub-reto-opcion {
+    padding: 10px 13px;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: var(--glass-blur-suave);
+    -webkit-backdrop-filter: var(--glass-blur-suave);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-sm);
+    color: var(--texto-principal);
+    font-family: var(--fuente-cuerpo);
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+    transition: all var(--t-rapido) var(--curva-suave);
+    position: relative;
+    overflow: hidden;
+}
+
+.hub-reto-opcion:hover:not(:disabled) {
+    border-color: var(--acento);
+    background: rgba(255, 255, 255, 0.65);
+    transform: translateY(-1px);
+    box-shadow: var(--sombra-xs);
+}
+
+.hub-reto-opcion:disabled {
+    cursor: default;
+    opacity: 0.75;
+}
+
+.hub-reto-opcion.correcta {
+    border-color: var(--ok);
+    background: var(--ok-suave);
+    color: var(--ok);
+    opacity: 1;
+    animation: escala-pop var(--t-medio) var(--curva-rebote) both;
+}
+
+.hub-reto-opcion.correcta::after {
+    content: '✓';
+    position: absolute;
+    right: 12px; top: 50%;
+    transform: translateY(-50%);
+    font-weight: 700;
+}
+
+.hub-reto-opcion.incorrecta {
+    border-color: var(--error);
+    background: var(--error-suave);
+    color: var(--error);
+    opacity: 1;
+    animation: sacudir 0.5s var(--curva-suave);
+}
+
+.hub-reto-opcion.incorrecta::after {
+    content: '✕';
+    position: absolute;
+    right: 12px; top: 50%;
+    transform: translateY(-50%);
+    font-weight: 700;
+}
+
+.hub-reto-resultado {
+    margin: 12px 0 0;
+    font-size: 12.5px;
+    color: var(--texto-tenue);
+    animation: aparecer-subir var(--t-rapido) var(--curva-entrada) both;
+}
+
+.hub-reto-resultado.acierto {
+    color: var(--ok);
+    font-weight: 600;
+}
+
+/* Confeti de celebración al acertar (elementos decorativos posicionados por JS) */
+.hub-reto-confeti {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 2;
+}
+.confeti-pieza {
+    position: absolute;
+    top: 0;
+    width: 6px; height: 10px;
+    border-radius: 2px;
+    animation: confeti-caer 1.4s ease-in forwards;
+}
+.confeti-pieza:nth-child(5n)   { background: var(--acento); }
+.confeti-pieza:nth-child(5n+1) { background: var(--rosa); }
+.confeti-pieza:nth-child(5n+2) { background: var(--violeta); }
+.confeti-pieza:nth-child(5n+3) { background: var(--ok); }
+.confeti-pieza:nth-child(5n+4) { background: var(--alerta); }
+
+/* Racha de aciertos del reto */
+.hub-reto-racha-aciertos {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 10px;
+    font-size: 11.5px;
+    color: var(--texto-tenue);
+}
+.hub-reto-racha-aciertos .estrella-mini {
+    color: var(--alerta);
+    animation: destello-mini 1.8s ease-in-out infinite;
+}
+
+
+/* ============================================================
+   13. FAVORITOS
+   ============================================================ */
+
+.hub-favoritos {
+    margin-bottom: 22px;
+}
+
+.hub-favoritos-titulo-fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.hub-favoritos-titulo {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--texto-principal);
+}
+
+.hub-favoritos-ayuda {
+    font-weight: 400;
+    font-size: 11.5px;
+    color: var(--texto-tenue);
+}
+
+.hub-favoritos-contador {
+    padding: 2px 9px;
+    border-radius: var(--r-full);
+    background: var(--acento-suave);
+    color: var(--acento);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.hub-favoritos-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    min-height: 40px;
+    padding: 6px;
+    border-radius: var(--r-lg);
+    transition: background var(--t-medio) ease, border-color var(--t-medio) ease;
+    border: 1px dashed transparent;
+}
+
+/* Cuando se arrastra un chip sobre la lista (zona de soltar activa) */
+.hub-favoritos-lista.zona-activa {
+    background: var(--acento-suave);
+    border-color: var(--acento);
+}
+
+.hub-favorito-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 8px 7px 13px;
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: var(--glass-blur-suave);
+    -webkit-backdrop-filter: var(--glass-blur-suave);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-full);
+    font-size: 13px;
+    color: var(--texto-principal);
+    cursor: grab;
+    user-select: none;
+    transition: all var(--t-rapido) var(--curva-suave);
+    animation: chip-entrar var(--t-rapido) var(--curva-entrada) both;
+}
+
+.hub-favorito-chip:hover {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: var(--acento-suave-2);
+    transform: translateY(-1px);
+    box-shadow: var(--sombra-xs);
+}
+
+.hub-favorito-chip:active {
+    cursor: grabbing;
+    transform: scale(0.97);
+}
+
+.hub-favorito-chip.arrastrando {
+    opacity: 0.4;
+    transform: scale(0.95);
+}
+
+.hub-favorito-chip.saliendo {
+    animation: chip-salir var(--t-rapido) var(--curva-salida) forwards;
+}
+
+.hub-favorito-chip:focus-visible {
+    outline: 2px solid var(--acento);
+    outline-offset: 2px;
+}
+
+.hub-favorito-chip .icono {
+    font-size: 14px;
+}
+
+.hub-favorito-quitar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 19px;
+    height: 19px;
+    padding: 0;
+    background: rgba(59, 91, 219, 0.12);
+    border: none;
+    border-radius: 50%;
+    color: var(--texto-tenue);
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+    transition: all var(--t-rapido) ease;
+}
+
+.hub-favorito-quitar:hover {
+    background: var(--error);
+    color: #fff;
+    transform: rotate(90deg);
+}
+
+/* Estado vacío de favoritos, invita a arrastrar puertas aquí */
+.hub-favoritos-vacio {
+    width: 100%;
+    text-align: center;
+    padding: 18px;
+    font-size: 12.5px;
+    color: var(--texto-suave);
+    border: 1.5px dashed var(--linea-oscura);
+    border-radius: var(--r-lg);
+}
+
+
+/* ============================================================
+   14. BOTONES Y CONTROLES PROPIOS DEL HERO
+   ============================================================ */
+
+/* Selector de vista: cuadrícula / lista, para la sección de puertas */
+.hub-vista-selector {
+    display: inline-flex;
+    background: rgba(255,255,255,0.4);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-full);
+    padding: 3px;
+    gap: 2px;
+}
+.hub-vista-selector button {
+    width: 30px; height: 30px;
+    border: none;
+    background: transparent;
+    border-radius: var(--r-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--texto-tenue);
+    cursor: pointer;
+    transition: all var(--t-rapido) ease;
+}
+.hub-vista-selector button.activo {
+    background: #fff;
+    color: var(--acento);
+    box-shadow: var(--sombra-xs);
+}
+
+/* Botón "personalizar accesos" */
+.hub-personalizar-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(255,255,255,0.4);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-full);
+    font-size: 12.5px;
+    color: var(--texto-tenue);
+    cursor: pointer;
+    transition: all var(--t-rapido) ease;
+}
+.hub-personalizar-btn:hover {
+    color: var(--acento);
+    border-color: var(--acento);
+    background: rgba(255,255,255,0.65);
+}
+.hub-personalizar-btn svg {
+    transition: transform var(--t-medio) ease;
+}
+.hub-personalizar-btn:hover svg {
+    transform: rotate(90deg);
+}
+
+
+/* ============================================================
+   15. TOOLTIPS PROPIOS DEL HERO
+   ============================================================ */
+
+.hub-hero [data-tip-hero] {
+    position: relative;
+}
+.hub-hero [data-tip-hero]::after {
+    content: attr(data-tip-hero);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: rgba(26, 32, 54, 0.9);
+    color: #fff;
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: var(--r-xs);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--t-rapido) ease, transform var(--t-rapido) ease;
+    z-index: var(--z-tooltip);
+}
+.hub-hero [data-tip-hero]:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+
+/* ============================================================
+   16. REDUCCIÓN DE MOVIMIENTO
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    .puerta,
+    .estrella,
+    .estrella-fugaz,
+    .gota,
+    .hoja-flotante,
+    .particula-polvo,
+    .hub-hero-rayos,
+    .hub-hero-campana.sonando,
+    .hub-hero-campana.sonando::before,
+    .hub-hero::after,
+    .hub-hero-avatar,
+    .hub-hero-avatar::after,
+    .hub-resumen-item,
+    .hub-resumen-mini-grafico span,
+    .hub-reto-icono,
+    .hub-reto-anillo-tiempo .relleno,
+    .hub-racha,
+    .hub-racha-llama .externa,
+    .hub-racha-llama .nucleo,
+    .hub-racha-dia.hoy,
+    .puerta-badge,
+    .puerta-fav.activo,
+    .puerta.es-nueva,
+    .puerta.es-nueva .puerta-titulo::after,
+    .puerta-icono.con-notificacion::before,
+    .hub-anuncio,
+    .hub-anuncio.destacado::before,
+    .confeti-pieza,
+    .hub-reto-racha-aciertos .estrella-mini,
+    .hub-hero-reloj .separador-reloj,
+    .hub-clima .icono-clima,
+    .hub-hero-saludo .acento-texto {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .hub-anuncio:nth-child(odd),
+    .hub-anuncio:nth-child(even),
+    .hub-anuncio:nth-child(3n) {
+        transform: none !important;
+    }
+}
+
+
+/* ============================================================
+   17. ALTO CONTRASTE
+   ============================================================ */
+
+@media (prefers-contrast: high) {
+    .puerta,
+    .hub-hero,
+    .hub-resumen-item,
+    .hub-anuncio,
+    .hub-reto,
+    .hub-favorito-chip {
+        border-width: 1.5px;
+    }
+    .hub-hero-saludo .acento-texto {
+        -webkit-text-fill-color: initial;
+        background: none;
+        color: var(--acento);
+    }
+}
+
+
+/* ============================================================
+   18. IMPRESIÓN
+   ============================================================ */
+
+@media print {
+    .hub-hero-ambiente,
+    .hub-comandos,
+    .hub-hero::after,
+    .hub-reto-confeti,
+    .hub-buscar-abrir,
+    .hub-vista-selector,
+    .hub-personalizar-btn {
+        display: none !important;
+    }
+    .hub-hero,
+    .puerta,
+    .hub-resumen-item,
+    .hub-anuncio,
+    .hub-reto,
+    .hub-favorito-chip {
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        background: #fff !important;
+        border: 1px solid #ccc !important;
+        transform: none !important;
+    }
+}
+
+
+/* ============================================================
+   19. RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 900px) {
+    .hub-resumen { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+    .hub-tablon-lista { gap: 14px; }
+}
+
+@media (max-width: 640px) {
+    .hub-hero { flex-direction: column; align-items: flex-start; padding: 26px 22px; }
+    .hub-hero-avatar { width: 58px; height: 58px; }
+    .hub-hero-campana { width: 22px; height: 22px; margin-left: 40px; margin-top: -18px; }
+    .hub-resumen-valor-texto { max-width: 20ch; }
+    .hub-comandos { padding-top: 8vh; }
+    .hub-anuncio { flex-basis: 210px; }
+    .hub-reto-encabezado { flex-wrap: wrap; }
+    .hub-reto-anillo-tiempo { display: none; }
+    .hub-clima { display: none; }
+}
+
+@media (max-width: 420px) {
+    .hub-hero-saludo { font-size: 1.5rem; }
+    .puertas-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+    .hub-favoritos-lista { gap: 6px; }
+    .hub-racha-calendario { flex-wrap: wrap; }
+}
+.hub-tablon-lista {
+    scroll-snap-type: x mandatory;
+}

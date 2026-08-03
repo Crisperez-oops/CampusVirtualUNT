@@ -1,0 +1,572 @@
+/* social.css — Estilo Facebook/Instagram para Feed, Amigos y Marketplace */
+
+/* ── Layout social ──────────────────────────────────── */
+.social-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.social-main { min-width: 0; }
+
+.social-sidebar {
+    position: sticky;
+    top: calc(var(--hub-topbar-h, 61px) + 20px);
+    align-self: start;
+}
+
+/* ── Crear publicación ──────────────────────────────── */
+.feed-crear {
+    background: var(--bg-panel);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-lg);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.feed-crear-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.feed-crear-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    color: #0B0F1A;
+    flex-shrink: 0;
+}
+
+.feed-crear textarea {
+    flex: 1;
+    background: var(--bg-base);
+    border: 1px solid var(--linea);
+    border-radius: 24px;
+    color: var(--texto-principal);
+    padding: 12px 18px;
+    font-family: var(--fuente-cuerpo);
+    font-size: 14.5px;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: 44px;
+    line-height: 1.4;
+}
+.feed-crear textarea:focus { 
+    border-color: var(--acento); 
+    box-shadow: 0 0 0 3px rgba(108,140,255,0.1);
+}
+
+.feed-crear-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--linea);
+}
+
+.feed-crear-actions .btn-publicar {
+    background: var(--acento);
+    color: #fff;
+    padding: 8px 28px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.feed-crear-actions .btn-publicar:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(108,140,255,0.3);
+}
+
+/* ── Post del feed ──────────────────────────────────── */
+.feed-post {
+    background: var(--bg-panel);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-lg);
+    padding: 0;
+    margin-bottom: 18px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s;
+    animation: feedFadeIn 0.4s ease forwards;
+}
+
+@keyframes feedFadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.feed-post:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+
+.feed-post-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+}
+
+.feed-post-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 17px;
+    color: #0B0F1A;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.feed-post-user-info { flex: 1; min-width: 0; }
+
+.feed-post-user-name {
+    font-weight: 600;
+    font-size: 14.5px;
+    color: var(--texto-principal);
+    line-height: 1.2;
+}
+
+.feed-post-user-time {
+    font-size: 12px;
+    color: var(--texto-tenue);
+    margin-top: 2px;
+}
+
+.feed-post-body {
+    padding: 0 18px 12px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--texto-principal);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ── Barra de acciones ──────────────────────────────── */
+.feed-post-actions-bar {
+    display: flex;
+    justify-content: space-around;
+    padding: 6px 12px;
+    border-top: 1px solid var(--linea);
+    border-bottom: 1px solid var(--linea);
+}
+
+.feed-action-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
+    background: none;
+    border: none;
+    color: var(--texto-tenue);
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+
+.feed-action-btn:hover { background: rgba(108,140,255,0.06); color: var(--texto-principal); }
+
+.feed-action-btn.liked { color: #e74c3c; font-weight: 600; }
+
+.feed-action-btn.liked:hover { background: rgba(231,76,60,0.06); }
+
+.feed-action-icon { font-size: 18px; line-height: 1; }
+
+/* ── Comentarios ────────────────────────────────────── */
+.feed-comentarios {
+    padding: 8px 18px 12px;
+    background: var(--bg-base);
+}
+
+.comentarios-lista {
+    max-height: 260px;
+    overflow-y: auto;
+    margin-bottom: 8px;
+}
+
+.comentario-item {
+    display: flex;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+}
+
+.comentario-item:last-child { border-bottom: none; }
+
+.comentario-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+    color: #0B0F1A;
+    flex-shrink: 0;
+}
+
+.comentario-burbuja {
+    background: var(--bg-panel);
+    border-radius: 14px;
+    padding: 7px 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.comentario-nombre {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--texto-principal);
+    margin-bottom: 1px;
+}
+
+.comentario-texto {
+    font-size: 13px;
+    color: var(--texto-principal);
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.comentario-fecha {
+    font-size: 10px;
+    color: var(--texto-tenue);
+    margin-top: 3px;
+}
+
+.comentario-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--linea);
+}
+
+.comentario-form-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 11px;
+    color: #0B0F1A;
+    flex-shrink: 0;
+}
+
+.comentario-form input {
+    flex: 1;
+    background: var(--bg-panel);
+    border: 1px solid var(--linea);
+    border-radius: 18px;
+    padding: 7px 14px;
+    font-size: 13px;
+    color: var(--texto-principal);
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+}
+.comentario-form input:focus { border-color: var(--acento); }
+
+/* ── Sidebar cards ──────────────────────────────────── */
+.social-sidebar-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-lg);
+    padding: 18px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.social-sidebar-card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--texto-principal);
+}
+
+.social-sidebar-card .sidebar-stat {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--acento);
+    line-height: 1;
+}
+
+.social-sidebar-card .sidebar-stat-label {
+    font-size: 12px;
+    color: var(--texto-tenue);
+    margin-top: 4px;
+}
+
+/* ── Amigos ─────────────────────────────────────────── */
+.solicitud-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    border-bottom: 1px solid var(--linea);
+    transition: opacity 0.3s;
+    border-radius: var(--r-sm);
+}
+.solicitud-item:hover { background: var(--bg-base); }
+.solicitud-item:last-child { border-bottom: none; }
+
+.amigos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 14px;
+}
+
+.amigo-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 20px 14px;
+    background: var(--bg-panel);
+    border-radius: var(--r-lg);
+    border: 1px solid var(--linea);
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+.amigo-card:hover { 
+    transform: translateY(-4px); 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+.amigo-card .amigo-avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 22px;
+    color: #0B0F1A;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+/* ── Marketplace ────────────────────────────────────── */
+.market-filtros {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding: 12px 0;
+}
+
+.market-filtro-btn {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--linea);
+    background: var(--bg-panel);
+    color: var(--texto-tenue);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+}
+.market-filtro-btn:hover { border-color: var(--acento); color: var(--acento); }
+.market-filtro-btn.active { background: var(--acento); color: white; border-color: var(--acento); }
+
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+}
+
+.market-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-lg);
+    padding: 20px;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.market-card:hover { 
+    transform: translateY(-4px); 
+    box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+}
+
+.market-precio {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--ok);
+    margin: 8px 0;
+}
+
+.market-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--linea);
+}
+
+/* ── Loader ─────────────────────────────────────────── */
+.loader {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(108,140,255,0.15);
+    border-top-color: var(--acento);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Utils ───────────────────────────────────────────── */
+.form-control {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--bg-panel-alt);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-sm);
+    color: var(--texto-principal);
+    font-family: var(--fuente-cuerpo);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+}
+.form-control:focus { border-color: var(--acento); }
+
+.btn-pill { border-radius: 20px !important; }
+
+/* Sugerencias */
+.sugerencia-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.sugerencia-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--warning), var(--acento));
+    opacity: 0.6;
+}
+
+.sugerencia-card .btn-primary {
+    transition: all 0.2s ease;
+}
+
+.sugerencia-card .btn-primary:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 12px rgba(0,122,255,0.3);
+}
+
+/* ── Form producto ──────────────────────────────────── */
+.form-producto {
+    background: var(--bg-panel);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-lg);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    animation: feedFadeIn 0.3s ease forwards;
+}
+
+/* ── Botón crear en marketplace ─────────────────────── */
+.btn-crear-market {
+    padding: 9px 20px;
+    border-radius: 20px;
+    background: var(--ok);
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.btn-crear-market:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(52,199,89,0.3);
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 1000px) {
+    .social-layout { 
+        grid-template-columns: 1fr; 
+        max-width: 680px;
+    }
+    .social-sidebar { 
+        position: static;
+        order: -1;
+    }
+    .social-sidebar .social-sidebar-card {
+        display: inline-block;
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .social-layout { max-width: 100%; }
+    .feed-post { border-radius: 0; border-left: none; border-right: none; margin-bottom: 10px; }
+    .feed-crear { border-radius: 0; border-left: none; border-right: none; margin-bottom: 10px; }
+    .feed-post-header { padding: 12px 14px; }
+    .feed-post-body { padding: 0 14px 10px; font-size: 14px; }
+    .feed-comentarios { padding: 8px 14px 10px; }
+    .feed-crear-avatar { width: 38px; height: 38px; font-size: 16px; }
+    .feed-post-avatar { width: 38px; height: 38px; font-size: 15px; }
+    .market-grid { grid-template-columns: 1fr; gap: 12px; }
+}
+
+@media (max-width: 480px) {
+    .social-layout { gap: 0; }
+    .feed-post { margin-bottom: 8px; }
+    .feed-post-header { padding: 10px 12px; }
+    .feed-post-body { padding: 0 12px 8px; font-size: 13.5px; }
+    .feed-comentarios { padding: 6px 12px 8px; }
+    .feed-post-actions-bar { padding: 4px 6px; }
+    .feed-action-btn { font-size: 12px; padding: 6px; }
+    .amigos-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .amigo-card { padding: 14px 8px; }
+    .market-card { padding: 16px; }
+    .market-filtros { padding: 8px 0; gap: 4px; }
+    .market-filtro-btn { padding: 5px 10px; font-size: 11px; border-radius: 16px; }
+    .market-precio { font-size: 20px; }
+    .form-producto { padding: 14px; }
+    .form-producto .grid-2 { grid-template-columns: 1fr; gap: 10px; }
+    .solicitud-item { flex-wrap: wrap; gap: 10px; padding: 10px; }
+    .solicitud-item > div:last-child { width: 100%; justify-content: flex-end; }
+}
+
+@media (max-width: 380px) {
+    .amigos-grid { grid-template-columns: 1fr; }
+    .feed-post-avatar { width: 34px; height: 34px; font-size: 14px; }
+    .feed-post-user-name { font-size: 13px; }
+    .feed-action-btn { font-size: 11px; gap: 3px; }
+    .market-card { padding: 12px; }
+    .market-precio { font-size: 18px; }
+    .amigo-card { padding: 10px 6px; }
+    .amigo-avatar { width: 48px; height: 48px; font-size: 18px; }
+    .market-filtro-btn { padding: 4px 8px; font-size: 10px; }
+}

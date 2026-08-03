@@ -1,0 +1,424 @@
+/* ============================================================
+   sidebar.css — Barra lateral del Dashboard
+   Extiende el sistema de estilo.css (no define paleta propia),
+   con el mismo lenguaje de vidrio esmerilado de bienvenida.css.
+   Cárgalo DESPUÉS de estilo.css.
+
+   Cada variable tiene un valor de respaldo (segundo argumento de
+   var()) para que el archivo funcione aunque se cargue en una
+   página donde --bg-panel, --acento, etc. todavía no existan.
+   ============================================================ */
+
+/* ============================================================
+   sidebar.css — Barra lateral del Dashboard
+   Extiende el sistema de estilo.css (no define paleta propia),
+   con el mismo lenguaje de vidrio esmerilado de bienvenida.css.
+   Cárgalo DESPUÉS de estilo.css Y DESPUÉS de dashboard.css.
+
+   IMPORTANTE — a propósito NO toco aquí: width, position, top,
+   margin, display, flex-direction, overflow ni el gap del
+   contenedor .dash-sidebar. Todo eso ya vive en dashboard.css
+   (incluyendo la animación de colapsar con la clase
+   `sidebar-colapsada` en .dash-layout) — si yo también lo
+   fijara aquí, pelearía con esas reglas. Este archivo solo
+   toca apariencia: color, vidrio, bordes, sombras, estados.
+
+   Cada variable tiene un valor de respaldo (segundo argumento de
+   var()) para que el archivo funcione aunque se cargue en una
+   página donde --bg-panel, --acento, etc. todavía no existan.
+   ============================================================ */
+
+.dash-sidebar {
+    --sb-radio-xl: 26px;
+    --sb-radio-lg: 18px;
+    --sb-radio-md: 12px;
+    --sb-radio-sm: 8px;
+
+    --sb-cristal-fondo: color-mix(in srgb, var(--bg-panel, #14161d) 62%, transparent);
+    --sb-cristal-borde: color-mix(in srgb, white 12%, transparent);
+    --sb-cristal-borde-fuerte: color-mix(in srgb, white 20%, transparent);
+    --sb-blur: blur(20px) saturate(180%);
+
+    background: var(--sb-cristal-fondo);
+    border: 1px solid var(--sb-cristal-borde);
+    border-radius: var(--sb-radio-xl);
+    backdrop-filter: var(--sb-blur);
+    -webkit-backdrop-filter: var(--sb-blur);
+    box-shadow: 0 12px 38px rgba(0, 0, 0, 0.28), 0 1px 0 var(--sb-cristal-borde-fuerte) inset;
+    color: var(--texto-principal, #eef0f5);
+    font-family: var(--fuente-cuerpo, 'Inter', sans-serif);
+    scrollbar-width: thin;
+}
+
+.dash-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dash-sidebar::-webkit-scrollbar-thumb {
+    background: var(--sb-cristal-borde-fuerte);
+    border-radius: 999px;
+}
+
+/* ---------- Marca ---------- */
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 2px 2px 4px;
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--sb-radio-md);
+    background: linear-gradient(140deg, var(--azul-colonial, #2f5aa6), var(--terracota, #b5562f));
+    color: #fff;
+    font-family: var(--fuente-display, 'Fraunces', serif);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-brand-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.sidebar-brand-texto {
+    font-family: var(--fuente-display, 'Fraunces', serif);
+    font-weight: 700;
+    font-size: 14.5px;
+    color: var(--texto-principal, #eef0f5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-brand-sub {
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texto-tenue, #9aa0ad);
+}
+
+.sidebar-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    background: var(--sb-cristal-fondo);
+    border: 1px solid var(--sb-cristal-borde);
+    border-radius: 50%;
+    color: var(--texto-tenue, #9aa0ad);
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease, transform 0.2s ease;
+}
+
+.sidebar-toggle:hover,
+.sidebar-toggle:focus-visible {
+    border-color: var(--acento, #6c8cff);
+    color: var(--texto-principal, #eef0f5);
+    transform: scale(1.08);
+}
+
+/* Tu propio script marca .dash-layout.sidebar-colapsada — la flecha gira sola */
+.dash-layout.sidebar-colapsada .sidebar-toggle {
+    transform: rotate(180deg);
+}
+
+/* ---------- Secciones ---------- */
+
+.sidebar-seccion {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-seccion-label {
+    padding: 0 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texto-tenue, #9aa0ad);
+}
+
+.sidebar-seccion-cab {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2px 0 6px;
+}
+
+.sidebar-seccion-add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: var(--sb-cristal-fondo);
+    border: 1px solid var(--sb-cristal-borde);
+    border-radius: 50%;
+    color: var(--texto-tenue, #9aa0ad);
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.sidebar-seccion-add:hover,
+.sidebar-seccion-add:focus-visible {
+    border-color: var(--acento, #6c8cff);
+    color: var(--acento, #6c8cff);
+    background: var(--acento-suave, rgba(108, 140, 255, 0.16));
+}
+
+/* ---------- Enlaces de navegación ---------- */
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sidebar-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 10px 9px 14px;
+    background: none;
+    border: none;
+    border-radius: var(--sb-radio-md);
+    color: var(--texto-tenue, #9aa0ad);
+    font-family: inherit;
+    font-size: 13.5px;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.sidebar-link:hover,
+.sidebar-link:focus-visible {
+    background: color-mix(in srgb, white 6%, transparent);
+    color: var(--texto-principal, #eef0f5);
+}
+
+.sidebar-link-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: var(--sb-radio-sm);
+    background: color-mix(in srgb, white 5%, transparent);
+    font-size: 13.5px;
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.sidebar-link:hover .sidebar-link-icono {
+    transform: scale(1.06);
+}
+
+.sidebar-link-texto {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-badge {
+    flex-shrink: 0;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, white 8%, transparent);
+    border-radius: 999px;
+    color: var(--texto-tenue, #9aa0ad);
+    font-size: 10.5px;
+    font-weight: 600;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+/* Estado activo: fondo con degradado sutil + barra lateral de acento + ícono resaltado */
+.sidebar-link.activo {
+    background: linear-gradient(90deg, var(--acento-suave, rgba(108, 140, 255, 0.18)), transparent);
+    color: var(--texto-principal, #eef0f5);
+}
+
+.sidebar-link.activo::before {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60%;
+    border-radius: 999px;
+    background: var(--acento, #6c8cff);
+}
+
+.sidebar-link.activo .sidebar-link-icono {
+    background: var(--acento, #6c8cff);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--acento, #6c8cff) 45%, transparent);
+}
+
+.sidebar-link.activo .sidebar-badge {
+    background: var(--acento, #6c8cff);
+    color: #fff;
+}
+
+/* ---------- Formulario rápido de curso ---------- */
+
+.sidebar-curso-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+    margin: 2px 0 4px;
+    background: var(--sb-cristal-fondo);
+    border: 1px solid var(--sb-cristal-borde);
+    border-radius: var(--sb-radio-lg);
+    backdrop-filter: var(--sb-blur);
+    -webkit-backdrop-filter: var(--sb-blur);
+    animation: sb-form-aparecer 0.2s ease both;
+}
+
+@keyframes sb-form-aparecer {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.sidebar-curso-form input[type="text"] {
+    padding: 8px 10px;
+    background: color-mix(in srgb, white 5%, transparent);
+    border: 1px solid var(--sb-cristal-borde);
+    border-radius: var(--sb-radio-sm);
+    color: var(--texto-principal, #eef0f5);
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+
+.sidebar-curso-form input[type="text"]:focus {
+    border-color: var(--acento, #6c8cff);
+}
+
+.sidebar-curso-colores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.sidebar-curso-colores button,
+.sidebar-curso-colores span {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.12s ease, border-color 0.12s ease;
+}
+
+.sidebar-curso-colores button:hover,
+.sidebar-curso-colores span:hover {
+    transform: scale(1.12);
+}
+
+.sidebar-curso-colores .seleccionado,
+.sidebar-curso-colores [aria-pressed="true"] {
+    border-color: var(--texto-principal, #eef0f5);
+}
+
+.sidebar-curso-form-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.sidebar-curso-form-acciones button {
+    padding: 7px 12px;
+    border: 1px solid var(--sb-cristal-borde);
+    border-radius: 999px;
+    background: color-mix(in srgb, white 5%, transparent);
+    color: var(--texto-tenue, #9aa0ad);
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.sidebar-curso-form-acciones button:hover {
+    border-color: var(--acento, #6c8cff);
+    color: var(--texto-principal, #eef0f5);
+}
+
+.sidebar-curso-form-acciones .btn-guardar {
+    background: var(--acento, #6c8cff);
+    border-color: var(--acento, #6c8cff);
+    color: #fff;
+    font-weight: 600;
+}
+
+.sidebar-curso-form-acciones .btn-guardar:hover {
+    filter: brightness(1.08);
+    color: #fff;
+}
+
+/* ---------- Accesibilidad ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+    .sidebar-toggle,
+    .sidebar-link-icono,
+    .sidebar-curso-form,
+    .sidebar-curso-colores button,
+    .sidebar-curso-colores span {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width: 860px) {
+    .sidebar-brand-texto { font-size: 13px; }
+    .sidebar-brand-sub { font-size: 10px; }
+    .sidebar-link { padding: 7px 8px 7px 12px; font-size: 12.5px; }
+    .sidebar-link-icono { width: 22px; height: 22px; font-size: 12px; }
+}
+
+@media (max-width: 560px) {
+    .dash-sidebar {
+        --sb-radio-xl: 0;
+        --sb-radio-lg: 0;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+    .sidebar-brand { gap: 8px; }
+    .sidebar-logo { width: 32px; height: 32px; border-radius: var(--sb-radio-sm); }
+    .sidebar-link-icono { width: 20px; height: 20px; font-size: 11px; }
+}
+
+@media (max-width: 400px) {
+    .sidebar-link { padding: 6px 6px 6px 10px; font-size: 12px; gap: 8px; }
+    .sidebar-brand-texto { font-size: 12px; }
+    .sidebar-toggle { width: 22px; height: 22px; font-size: 11px; }
+}
